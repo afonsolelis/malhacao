@@ -1,0 +1,281 @@
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="page-title">Painel Principal</h1>
+        <p class="lead">Bem-vindo ao seu rastreador de academia. Gerencie equipamentos, crie treinos e acompanhe seu progresso.</p>
+    </div>
+</div>
+
+<div class="row mt-4 g-4">
+    <div class="col-md-4">
+        <div class="card bg-primary-gradient text-white h-100">
+            <div class="card-body text-center">
+                <div class="display-6 mb-2"><i class="bi bi-gear"></i></div>
+                <h5 class="card-title">Equipamentos</h5>
+                <p class="card-text">Gerencie máquinas e exercícios da academia</p>
+                <a href="/equipment" class="btn btn-light">Ver Equipamentos</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white h-100">
+            <div class="card-body text-center">
+                <div class="display-6 mb-2"><i class="bi bi-list-check"></i></div>
+                <h5 class="card-title">Treinos</h5>
+                <p class="card-text">Crie e gerencie suas rotinas de treino</p>
+                <a href="/workouts" class="btn btn-light">Ver Treinos</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white h-100">
+            <div class="card-body text-center">
+                <div class="display-6 mb-2"><i class="bi bi-calendar-check"></i></div>
+                <h5 class="card-title">Sessões</h5>
+                <p class="card-text">Acompanhe suas sessões de treino</p>
+                <a href="/sessions" class="btn btn-light">Ver Sessões</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <h3>Acompanhamento de Progresso</h3>
+        <div class="progress-stats">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-card card text-center bg-white text-dark">
+                        <div class="card-body">
+                            <h3 id="total-workouts">0</h3>
+                            <p class="text-muted">Treinos Totais</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card card text-center bg-white text-dark">
+                        <div class="card-body">
+                            <h3 id="this-week">0</h3>
+                            <p class="text-muted">Esta Semana</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card card text-center bg-white text-dark">
+                        <div class="card-body">
+                            <h3 id="avg-completion">0%</h3>
+                            <p class="text-muted">Conclusão Média</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card card text-center bg-white text-dark">
+                        <div class="card-body">
+                            <h3 id="streak">0</h3>
+                            <p class="text-muted">Sequência de Dias</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Sessões Recentes</h5>
+            </div>
+            <div class="card-body">
+                <div id="recent-sessions">
+                    <p class="text-muted">Carregando sessões recentes...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>Gráfico de Progresso</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="progressChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4 g-3">
+    <div class="col-12 col-md-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5>Dias sem treino (últimos 7)</h5>
+            </div>
+            <div class="card-body">
+                <div id="missed-7">
+                    <p class="text-muted">Carregando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5>Dias sem treino (últimos 30)</h5>
+            </div>
+            <div class="card-body">
+                <div id="missed-30">
+                    <p class="text-muted">Carregando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load dashboard data
+    fetch('/api/dashboard/stats')
+        .then(response => response.json())
+        .then(data => {
+            // Update stats
+            document.getElementById('total-workouts').textContent = data.totalWorkouts ?? 0;
+            document.getElementById('this-week').textContent = data.thisWeekSessions ?? 0;
+            document.getElementById('avg-completion').textContent = (data.avgCompletion ?? 0) + '%';
+            document.getElementById('streak').textContent = data.streak ?? 0;
+
+            // Update recent sessions
+            const recentSessionsDiv = document.getElementById('recent-sessions');
+            const recentSessions = Array.isArray(data.recentSessions) ? data.recentSessions : [];
+            if (recentSessions.length > 0) {
+                let sessionsHTML = '<ul class="list-group list-group-flush">';
+                recentSessions.forEach(session => {
+                    // Count completed exercises
+                    let completedCount = 0;
+                    const completedExercises = Array.isArray(session.completedExercises) ? session.completedExercises : [];
+                    let totalCount = completedExercises.length;
+
+                    completedExercises.forEach(exercise => {
+                        if (exercise.completed) completedCount++;
+                    });
+
+                    let badgeClass = 'bg-success';
+                    let statusText = 'Completed';
+
+                    if (completedCount < totalCount) {
+                        badgeClass = 'bg-warning';
+                        statusText = 'Partial';
+                    }
+
+                    if (completedCount === 0) {
+                        badgeClass = 'bg-danger';
+                        statusText = 'Incomplete';
+                    }
+
+                    sessionsHTML += `
+                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">${session.workoutId?.name || 'Treino'}</div>
+                                ${new Date(session.date).toLocaleDateString()}
+                            </div>
+                            <span class="badge ${badgeClass} rounded-pill">${statusText}</span>
+                        </li>
+                    `;
+                });
+                sessionsHTML += '</ul>';
+                recentSessionsDiv.innerHTML = sessionsHTML;
+            } else {
+                recentSessionsDiv.innerHTML = '<p>No recent sessions</p>';
+            }
+
+            // Progress chart
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            const monthlyData = Array.isArray(data.monthlyData) ? data.monthlyData : [];
+            const progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: monthlyData.map(item => item.month),
+                    datasets: [{
+                        label: 'Workouts Completed',
+                        data: monthlyData.map(item => item.count),
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Missed days (7 and 30)
+            const renderMissed = (containerId, days) => {
+                const container = document.getElementById(containerId);
+                const list = Array.isArray(days) ? days : [];
+                if (list.length === 0) {
+                    container.innerHTML = '<p class="text-success mb-0">Nenhum dia sem treino no período.</p>';
+                    return;
+                }
+                let html = '<ul class="list-group list-group-flush small">';
+                list.forEach(dateValue => {
+                    const d = new Date(dateValue);
+                    const label = d.toLocaleDateString();
+                    html += `
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>${label}</span>
+                            <span class="badge bg-danger">Sem treino</span>
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+                container.innerHTML = html;
+            };
+
+            renderMissed('missed-7', data.missedDays7);
+            renderMissed('missed-30', data.missedDays30);
+        })
+        .catch(error => {
+            console.error('Error loading dashboard data:', error);
+
+            // Fallback to static content if API fails
+            document.getElementById('total-workouts').textContent = '0';
+            document.getElementById('this-week').textContent = '0';
+            document.getElementById('avg-completion').textContent = '0%';
+            document.getElementById('streak').textContent = '0';
+
+            document.getElementById('recent-sessions').innerHTML = '<p>Error loading recent sessions</p>';
+            document.getElementById('missed-7').innerHTML = '<p class="text-muted">Erro ao carregar.</p>';
+            document.getElementById('missed-30').innerHTML = '<p class="text-muted">Erro ao carregar.</p>';
+
+            // Initialize empty chart
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Workouts Completed',
+                        data: [0, 0, 0, 0, 0, 0],
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+});
+</script>

@@ -1,0 +1,50 @@
+<h1>Detalhes da Sessão: <%= session.workoutId.name %></h1>
+
+<p><strong>Data:</strong> <%= new Date(session.date).toLocaleDateString() %></p>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Equipamento</th>
+                <th>Repetições</th>
+                <th>Peso</th>
+                <th>Min</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% session.completedExercises.forEach(exercise => { %>
+                <tr>
+                    <td>
+                        <%= exercise.equipmentId.number %> - <%= exercise.equipmentId.name %><br>
+                        <small class="text-muted"><%= exercise.equipmentId.description %></small>
+                    </td>
+                    <td><%= exercise.reps ?? '-' %></td>
+                    <td><%= exercise.weight ?? '-' %></td>
+                    <td><%= exercise.durationMinutes ?? '-' %></td>
+                    <td>
+                        <% if (exercise.completed) { %>
+                            <span class="badge bg-success">Concluído</span>
+                        <% } else { %>
+                            <span class="badge bg-warning">Não Concluído</span>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</div>
+
+<% if (session.notes) { %>
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5>Observações</h5>
+        </div>
+        <div class="card-body">
+            <p><%= session.notes %></p>
+        </div>
+    </div>
+<% } %>
+
+<a href="/sessions" class="btn btn-primary">Voltar às Sessões</a>

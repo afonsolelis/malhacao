@@ -1,0 +1,98 @@
+<h1>Criar Treino</h1>
+
+<form method="POST" action="/workouts">
+    <div class="mb-3">
+        <label for="name" class="form-label">Nome do Treino</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Descrição</label>
+        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+    </div>
+    
+    <h3 class="mt-4">Exercícios</h3>
+    <div id="exercises-container">
+        <div class="exercise-item mb-3 p-3 border rounded">
+            <div class="row g-2">
+                <div class="col-12 col-md-4">
+                    <select class="form-select equipment-select" name="exercises[0][equipmentId]" required>
+                        <option value="">Selecione o Equipamento</option>
+                        <% equipment.forEach(item => { %>
+                            <option value="<%= item._id %>"><%= item.number %> - <%= item.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[0][reps]" placeholder="Reps" min="0" value="10">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[0][weight]" placeholder="Peso" min="0" step="0.5" value="0">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[0][sets]" placeholder="Séries" min="0" value="3">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[0][durationMinutes]" placeholder="Min" min="0">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button type="button" class="btn btn-secondary mb-3" id="add-exercise">Adicionar Exercício</button>
+    
+    <button type="submit" class="btn btn-primary">Criar Treino</button>
+    <a href="/workouts" class="btn btn-secondary">Cancelar</a>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('exercises-container');
+    const addButton = document.getElementById('add-exercise');
+    let exerciseIndex = 1;
+    
+    addButton.addEventListener('click', function() {
+        const exerciseItem = document.createElement('div');
+        exerciseItem.className = 'exercise-item mb-3 p-3 border rounded';
+        exerciseItem.innerHTML = `
+            <div class="row g-2">
+                <div class="col-12 col-md-4">
+                    <select class="form-select equipment-select" name="exercises[${exerciseIndex}][equipmentId]" required>
+                        <option value="">Selecione o Equipamento</option>
+                        <% equipment.forEach(item => { %>
+                            <option value="<%= item._id %>"><%= item.number %> - <%= item.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[${exerciseIndex}][reps]" placeholder="Reps" min="0" value="10">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[${exerciseIndex}][weight]" placeholder="Peso" min="0" step="0.5" value="0">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[${exerciseIndex}][sets]" placeholder="Séries" min="0" value="3">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[${exerciseIndex}][durationMinutes]" placeholder="Min" min="0">
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-danger remove-exercise mt-2">Remover</button>
+        `;
+        
+        container.appendChild(exerciseItem);
+        exerciseIndex++;
+        
+        // Add event listener to the remove button
+        exerciseItem.querySelector('.remove-exercise').addEventListener('click', function() {
+            container.removeChild(exerciseItem);
+        });
+    });
+    
+    // Add event delegation for removing exercises
+    container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-exercise')) {
+            container.removeChild(e.target.parentElement);
+        }
+    });
+});
+</script>

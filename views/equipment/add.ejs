@@ -1,0 +1,52 @@
+<h1 class="page-title">Adicionar Equipamento</h1>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" action="/equipment">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="number" class="form-label">Número do Equipamento</label>
+                        <input type="number" class="form-control" id="number" name="number" required>
+                        <div class="form-text">Digite o número do equipamento conforme identificado na academia</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome do Equipamento</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="form-text">Digite o nome do equipamento</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Descrição</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                <div class="form-text">Descreva o equipamento e seu uso principal</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="defaultReps" class="form-label">Repetições Padrão</label>
+                        <input type="number" class="form-control" id="defaultReps" name="defaultReps" value="10">
+                        <div class="form-text">Número padrão de repetições para este equipamento</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="defaultWeight" class="form-label">Peso Padrão (kg)</label>
+                        <input type="number" class="form-control" id="defaultWeight" name="defaultWeight" value="0">
+                        <div class="form-text">Peso padrão a ser usado para este equipamento</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="/equipment" class="btn btn-secondary me-md-2">Cancelar</a>
+                <button type="submit" class="btn btn-success"><i class="bi bi-save me-1"></i> Salvar Equipamento</button>
+            </div>
+        </form>
+    </div>
+</div>

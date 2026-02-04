@@ -1,0 +1,101 @@
+<h1>Edit Workout</h1>
+
+<form method="POST" action="/workouts/<%= workout._id %>/?_method=PUT">
+    <input type="hidden" name="_method" value="PUT">
+    <div class="mb-3">
+        <label for="name" class="form-label">Workout Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="<%= workout.name %>" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3"><%= workout.description %></textarea>
+    </div>
+    
+    <h3 class="mt-4">Exercises</h3>
+    <div id="exercises-container">
+        <% workout.exercises.forEach((exercise, index) => { %>
+            <div class="exercise-item mb-3 p-3 border rounded">
+                <div class="row g-2">
+                    <div class="col-12 col-md-4">
+                        <select class="form-select equipment-select" name="exercises[<%= index %>][equipmentId]" required>
+                            <option value="">Select Equipment</option>
+                            <% equipment.forEach(item => { %>
+                                <option value="<%= item._id %>" <%= exercise.equipmentId._id.toString() === item._id.toString() ? 'selected' : '' %>><%= item.number %> - <%= item.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <input type="number" class="form-control" name="exercises[<%= index %>][reps]" placeholder="Reps" min="0" value="<%= exercise.reps ?? '' %>">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <input type="number" class="form-control" name="exercises[<%= index %>][weight]" placeholder="Weight" min="0" step="0.5" value="<%= exercise.weight ?? '' %>">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <input type="number" class="form-control" name="exercises[<%= index %>][sets]" placeholder="Sets" min="0" value="<%= exercise.sets ?? '' %>">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <input type="number" class="form-control" name="exercises[<%= index %>][durationMinutes]" placeholder="Min" min="0" value="<%= exercise.durationMinutes ?? '' %>">
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+    
+    <button type="button" class="btn btn-secondary mb-3" id="add-exercise">Add Exercise</button>
+    
+    <button type="submit" class="btn btn-primary">Update Workout</button>
+    <a href="/workouts" class="btn btn-secondary">Cancel</a>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('exercises-container');
+    const addButton = document.getElementById('add-exercise');
+    let exerciseIndex = <%= workout.exercises.length %>;
+    
+    addButton.addEventListener('click', function() {
+        const exerciseItem = document.createElement('div');
+        exerciseItem.className = 'exercise-item mb-3 p-3 border rounded';
+        exerciseItem.innerHTML = `
+            <div class="row g-2">
+                <div class="col-12 col-md-4">
+                    <select class="form-select equipment-select" name="exercises[\${exerciseIndex}][equipmentId]" required>
+                        <option value="">Select Equipment</option>
+                        <% equipment.forEach(item => { %>
+                            <option value="<%= item._id %>"><%= item.number %> - <%= item.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[\${exerciseIndex}][reps]" placeholder="Reps" min="0" value="10">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[\${exerciseIndex}][weight]" placeholder="Weight" min="0" step="0.5" value="0">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[\${exerciseIndex}][sets]" placeholder="Sets" min="0" value="3">
+                </div>
+                <div class="col-6 col-md-2">
+                    <input type="number" class="form-control" name="exercises[\${exerciseIndex}][durationMinutes]" placeholder="Min" min="0">
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-danger remove-exercise mt-2">Remove</button>
+        `;
+        
+        container.appendChild(exerciseItem);
+        exerciseIndex++;
+        
+        // Add event listener to the remove button
+        exerciseItem.querySelector('.remove-exercise').addEventListener('click', function() {
+            container.removeChild(exerciseItem);
+        });
+    });
+    
+    // Add event delegation for removing exercises
+    container.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-exercise')) {
+            container.removeChild(e.target.parentElement);
+        }
+    });
+});
+</script>

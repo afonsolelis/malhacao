@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Gym Tracker' %></title>
+    <!-- Using a more modern Bootstrap theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <i class="bi bi-dumbbell me-2"></i>
+                <span class="fw-bold">Rastreador de Academia</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="bi bi-speedometer2 me-1"></i> Painel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/equipment"><i class="bi bi-gear me-1"></i> Equipamentos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/workouts"><i class="bi bi-list-check me-1"></i> Treinos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/sessions"><i class="bi bi-calendar-check me-1"></i> Sessões</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        <%- body %>
+    </main>
+
+    <footer class="footer mt-5 py-4 bg-dark text-light">
+        <div class="container text-center">
+            <p>&copy; 2023 Rastreador de Academia. Acompanhe sua jornada fitness.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

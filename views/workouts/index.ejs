@@ -1,0 +1,36 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="page-title">Treinos</h1>
+    <a href="/workouts/add" class="btn btn-success"><i class="bi bi-plus-circle me-1"></i> Adicionar Treino</a>
+</div>
+
+<div class="row g-4">
+    <% if (workouts.length > 0) { %>
+        <% workouts.forEach(workout => { %>
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title"><i class="bi bi-list-check text-primary me-2"></i><%= workout.name %></h5>
+                        <p class="card-text flex-grow-1"><%= workout.description %></p>
+                        <div class="d-grid gap-2 d-md-block">
+                            <a href="/workouts/edit/<%= workout._id %>" class="btn btn-sm btn-outline-primary me-1"><i class="bi bi-pencil"></i> Editar</a>
+                            <a href="/sessions/start/<%= workout._id %>" class="btn btn-sm btn-outline-success me-1"><i class="bi bi-play-circle"></i> Iniciar</a>
+                            <form action="/workouts/<%= workout._id %>?_method=DELETE" method="POST" class="d-inline">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir este treino?')"><i class="bi bi-trash"></i> Excluir</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="bi bi-list-check text-muted" style="font-size: 4rem;"></i>
+                <h4 class="mt-3 text-muted">Nenhum treino encontrado</h4>
+                <p class="text-muted">Crie sua primeira rotina de treino para começar</p>
+                <a href="/workouts/add" class="btn btn-primary"><i class="bi bi-plus-circle me-1"></i> Criar Treino</a>
+            </div>
+        </div>
+    <% } %>
+</div>

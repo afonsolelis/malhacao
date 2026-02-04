@@ -1,0 +1,58 @@
+<h1>Sessão de Treino: <%= session.name %></h1>
+
+<form method="POST" action="/sessions">
+    <input type="hidden" name="workoutId" value="<%= session.workoutId %>">
+    
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Equipment</th>
+                    <th>Reps</th>
+                    <th>Weight</th>
+                    <th>Sets</th>
+                    <th>Min</th>
+                    <th>Completed</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% session.exercises.forEach((exercise, index) => { %>
+                    <tr>
+                        <td>
+                            <%= exercise.equipmentId.number %> - <%= exercise.equipmentId.name %><br>
+                            <small class="text-muted"><%= exercise.equipmentId.description %></small>
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" name="exercises[<%= index %>][reps]" value="<%= exercise.reps ?? '' %>" min="0">
+                            <input type="hidden" name="exercises[<%= index %>][equipmentId]" value="<%= exercise.equipmentId._id %>">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" name="exercises[<%= index %>][weight]" value="<%= exercise.weight ?? '' %>" min="0" step="0.5">
+                        </td>
+                        <td>
+                            <%= exercise.sets ?? '-' %>
+                            <input type="hidden" name="exercises[<%= index %>][sets]" value="<%= exercise.sets ?? '' %>">
+                        </td>
+                        <td>
+                            <input type="number" class="form-control" name="exercises[<%= index %>][durationMinutes]" value="<%= exercise.durationMinutes ?? '' %>" min="0">
+                        </td>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="exercises[<%= index %>][completed]" value="true" id="completed<%= index %>" <%= exercise.completed ? 'checked' : '' %>>
+                                <label class="form-check-label" for="completed<%= index %>">Completed</label>
+                            </div>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mb-3">
+        <label for="notes" class="form-label">Observações</label>
+        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success">Salvar Sessão</button>
+    <a href="/sessions" class="btn btn-secondary">Cancelar</a>
+</form>
